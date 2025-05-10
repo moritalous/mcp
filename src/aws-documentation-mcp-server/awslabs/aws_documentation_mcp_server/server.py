@@ -73,11 +73,7 @@ mcp = FastMCP(
         'pydantic',
         'httpx',
         'beautifulsoup4',
-    ],
-    settings={
-        "json_response": True,
-        "stateless_http": True
-    }
+    ]
 )
 
 
@@ -420,6 +416,8 @@ def main():
     if args.streamable_http:
         logger.info(f'Using SSE transport on port {args.port}')
         mcp.settings.port = args.port
+        mcp.settings.json_response = True
+        mcp.settings.stateless_http = True
         mcp.run(transport='streamable-http')
     else:
         logger.info('Using standard stdio transport')
