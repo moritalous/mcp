@@ -74,6 +74,10 @@ mcp = FastMCP(
         'httpx',
         'beautifulsoup4',
     ],
+    settings={
+        "json_response": True,
+        "stateless_http": True
+    }
 )
 
 
@@ -404,7 +408,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='An AWS Labs Model Context Protocol (MCP) server for AWS Documentation'
     )
-    parser.add_argument('--sse', action='store_true', help='Use SSE transport')
+    parser.add_argument('--streamable-http', action='store_true', help='Use streamable HTTP transport')
     parser.add_argument('--port', type=int, default=8888, help='Port to run the server on')
 
     args = parser.parse_args()
@@ -413,10 +417,10 @@ def main():
     logger.info('Starting AWS Documentation MCP Server')
 
     # Run server with appropriate transport
-    if args.sse:
+    if args.streamable_http:
         logger.info(f'Using SSE transport on port {args.port}')
         mcp.settings.port = args.port
-        mcp.run(transport='sse')
+        mcp.run(transport='streamable-http')
     else:
         logger.info('Using standard stdio transport')
         mcp.run()
