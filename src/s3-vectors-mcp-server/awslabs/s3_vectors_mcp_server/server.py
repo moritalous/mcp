@@ -281,7 +281,6 @@ async def s3vectors_put(
         mdl_id = get_env_or_param(None, 'S3VECTORS_MODEL_ID', 'S3VECTORS_MODEL_ID')
 
         # Get optional parameters
-        aws_region = get_optional_env_or_param(None, 'S3VECTORS_REGION') or get_region()
         aws_profile = get_optional_env_or_param(None, 'S3VECTORS_PROFILE')
         dimensions_str = get_optional_env_or_param(None, 'S3VECTORS_DIMENSIONS')
         dimensions = int(dimensions_str) if dimensions_str else None
@@ -292,8 +291,11 @@ async def s3vectors_put(
         if metadata is None:
             metadata = {}
 
-        # Initialize AWS session and services
+        # Initialize AWS session and get region
         session = get_aws_session(aws_profile)
+        aws_region = get_optional_env_or_param(None, 'S3VECTORS_REGION') or get_region(session)
+
+        # Initialize AWS services
         bedrock_service = BedrockService(session, aws_region, debug=False)
         s3vector_service = S3VectorService(session, aws_region, debug=False)
 
@@ -429,13 +431,17 @@ async def s3vectors_query(
         mdl_id = get_env_or_param(None, 'S3VECTORS_MODEL_ID', 'S3VECTORS_MODEL_ID')
 
         # Get optional parameters
-        aws_region = get_optional_env_or_param(None, 'S3VECTORS_REGION') or get_region()
         aws_profile = get_optional_env_or_param(None, 'S3VECTORS_PROFILE')
         dimensions_str = get_optional_env_or_param(None, 'S3VECTORS_DIMENSIONS')
         dimensions = int(dimensions_str) if dimensions_str else None
 
-        # Initialize AWS session and services
+        # Initialize AWS session first
         session = get_aws_session(aws_profile)
+
+        # Get region (requires session)
+        aws_region = get_optional_env_or_param(None, 'S3VECTORS_REGION') or get_region(session)
+
+        # Initialize AWS services
         bedrock_service = BedrockService(session, aws_region, debug=False)
         s3vector_service = S3VectorService(session, aws_region, debug=False)
 
